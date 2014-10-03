@@ -183,26 +183,30 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
     o = open(filnavn, "w")
     o.writelines(newlines)
     o.close()
-    print filnavn[:-3] + "pdf"
     print os.system("pdflatex " + filnavn)
     os.system("evince " + filnavn[:-3] + "pdf")
-    os.system("ryddopp.bat")
+    if os.path.exists(filnavn[:-3] + "log"):
+        os.remove(filnavn[:-3] + "log")
+    if os.path.exists(filnavn[:-3] + "aux"):
+        os.remove(filnavn[:-3] + "aux")
+    os.rename(filnavn, "tex/"+filnavn)
+    os.rename(filnavn[:-3]+"pdf", "pdf/"+filnavn[:-3]+"pdf")
 
 top = Tk()
-top.minsize(width=500, height=100)
+top.minsize(width=300, height=110)
 top.title("Futronic")
 
 filelabel = Label(top, text="Ingen fil")
-filelabel.grid(row=0, column=1)
+filelabel.grid(row=4, column=1, sticky="w")
 
 def opendatafile():
     global datafilename
-    reportbutton.config(state='normal')
     datafilename = askopenfilename()
-    filelabel["text"] = datafilename
+    filelabel["text"] = os.path.basename(datafilename)
+    reportbutton.config(state='normal')
 
 datafilebutton = Button(top, text="Velg loggfil", command=opendatafile)
-datafilebutton.grid(row=0, column=0)
+datafilebutton.grid(row=4, column=0)
 
 shiptypes= [
     "20 Wing in ground",
@@ -291,29 +295,24 @@ shiptypelabel.grid(row=1, column=0)
 choosenshiptype = StringVar()
 choosenshiptype.set(shiptypes[0])
 shiptype = OptionMenu(top, choosenshiptype, *shiptypes)
-shiptype.grid(row=1, column=1)
+shiptype.grid(row=1, column=1, sticky="w")
 
 aistypelabel = Label(top, text="Ais-type")
 aistypelabel.grid(row=2, column=0)
 aistype = Entry(top)
-aistype.grid(row=2, column=1)
+aistype.grid(row=2, column=1, sticky="w")
 
 aissnlabel = Label(top, text="Serienummer")
 aissnlabel.grid(row=3, column=0)
 aissn = Entry(top)
-aissn.grid(row=3, column=1)
-
-def quitcallback():
-    quit()
-quitbutton = Button(top, text="Avslutte", command=quitcallback)
-quitbutton.grid(row=5, column=0)
+aissn.grid(row=3, column=1, sticky="w")
 
 def createreport():
     global datafilename 
     collectdata(datafilename, str(choosenshiptype.get()), str(aistype.get()), str(aissn.get()))
 reportbutton = Button(top, text="Lag rapport", command=createreport)
 reportbutton.config(state='disabled')
-reportbutton.grid(row=5, column=1)
+reportbutton.grid(row=5, column=1, sticky="w")
 
 top.mainloop()
 
