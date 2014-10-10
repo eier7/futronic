@@ -7,6 +7,7 @@
 \usepackage{datetime}
 \usepackage{tikz}
 \usepackage{graphicx}
+\usepackage[export]{adjustbox}
 \usepackage{gensymb}
 
 \setlength{\oddsidemargin}{0mm} % Adjust margins to center the colored title box
@@ -37,7 +38,7 @@
 \thispagestyle{empty} % Remove page numbering on this page
 
 \hspace{9cm}\begin{tikzpicture}        %gps-plassering
-	\draw (0,0)--(2,0)--(2,3)--(1,4)--(0,3)--(0,0);
+	\draw (0,0)--(2,0)--(2,3.5)--(1,4)--(0,3.5)--(0,0);
     %int gps
 	\draw [brown,fill=brown] (VgpsxV, VgpsyV) circle [radius=0.1];
 	\draw[dashed, brown] (3, VgpsyV)--(VgpsxcV, VgpsyV); %X
@@ -65,12 +66,12 @@
 {\small Longitude} & VlonV VlondV\\
 {\small True Heading} & VheadingV$^{\circ}$ \\
 {\small COG} & VcogV$^{\circ}$ \\
-{\small SOG} & VsogV \\
-{\small ROT} & VrotV \\
+{\small SOG} & VsogVkt \\
+{\small ROT} & VrotV$^{\circ}$\\
 & \\
 {\small $P_f$} & VpfVW \\
 {\small $P_r$} & VprVW \\
-{\small VSWR} & VvswrVW \\
+{\small VSWR} & VvswrV \\
 {\small AIS1 frequency} & Vais1freqVMHz \\
 {\small AIS2 frequency} & Vais2freqVMHz \\
 \end{tabular}
@@ -78,9 +79,8 @@
 Vfut1msgV
 Vfut2msgV
 }
+\\
+\vskip -6cm \hspace{8cm}\includegraphics[width=6cm, frame]{VmapV}
 
-
-%%
-%http://maps.googleapis.com/maps/api/staticmap?center=68.794,16.5522&zoom=14&size=1280x1024&sensor=false
 
 \end{document}

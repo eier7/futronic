@@ -6,6 +6,8 @@ import time
 import shutil
 from Tkinter import *
 from tkFileDialog import askopenfilename
+from PIL import Image
+import urllib
 
 def collectdata(futronic_file, shiptype, aistype, aissn):
     name="N/A"
@@ -55,8 +57,14 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
                 if(m.group(1) and m.group(2) and m.group(3) and m.group(4)):
                     lat=m.group(1)
                     latd=m.group(2)
+                    ddlat = float(lat.split('d')[0]) + (float(lat.split('d')[1])/60)
+                    if latd == 'S':
+                        ddlat = -ddlat
                     lon=m.group(3)
                     lond=m.group(4)
+                    ddlon = float(lon.split('d')[0]) + (float(lon.split('d')[1])/60)
+                    if lond == 'W':
+                        ddlon = -ddlon
             m = re.search("True Heading:\s*(\d*)", line) #Heading
             if(m):
                 if(m.group(1)):
@@ -90,10 +98,14 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
             if(m):
                 if(m.group(1)):
                     ais1freq=m.group(1)
+                    ais1freq=ais1freq.replace(",","")
+                    ais1freq=ais1freq.replace(".",",")
             m = re.search("AIS2 Freq\.:\s*(\S*)", line) #AIS channel 2 freq
             if(m):
                 if(m.group(1)):
                     ais2freq=m.group(1)
+                    ais2freq=ais2freq.replace(",","")
+                    ais2freq=ais2freq.replace(".",",")
             m = re.search("ship:\s*A:\s*(\d*)m\s*B:\s*(\d*)m\s*C:\s*(\d*)m\s*D:\s*(\d*)m", line) #GPS antenna position
             if(m):
                 if(m.group(1)):
@@ -110,7 +122,7 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
                 if(m.group(1)):
                     fut2msg=m.group(1)
     f.close()
-
+    
     filnavn = time.strftime("%Y%m%d_")+name+".tex"
     if(name != "N/A"):
         shutil.copyfile("futronic_ais", filnavn)
@@ -139,6 +151,20 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
 
     lat = lat.replace("d", "$^{\circ}$")
     lon = lon.replace("d", "$^{\circ}$")
+
+    img = open(filnavn[:-3]+"jpg", "wb")
+    img.write(urllib.urlopen('http://maps.googleapis.com/maps/api/staticmap?center='+str(ddlat)+','+str(ddlon)+'&zoom=14&size=400x300&sensor=false').read())
+    img.close()
+    Image.open(filnavn[:-3]+"jpg").save(filnavn[:-3]+"png")
+    imgbg = Image.open(filnavn[:-3]+"png")
+    imgbg = imgbg.convert('RGBA')
+    imgfg = Image.open("baatsymbol.png")
+    if heading == "N/A":
+        imgbg.paste(imgfg, (193, 160), mask=imgfg)
+    else:
+        imgfg = imgfg.rotate(360 - int(heading))
+        imgbg.paste(imgfg, (193, 160), mask=imgfg)
+    imgbg.save(filnavn[:-3]+"png")
 
     newlines = []
 
@@ -178,19 +204,23 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
         line=line.replace("VgpsdV", str(gpsd))
         line=line.replace("Vfut1msgV", fut1msg)
         line=line.replace("Vfut2msgV", fut2msg)
+        line=line.replace("VmapV", filnavn[:-3]+"png")
         newlines.append(line)
     t.close()
     o = open(filnavn, "w")
     o.writelines(newlines)
     o.close()
-    print os.system("pdflatex " + filnavn)
+    os.system("pdflatex " + filnavn)
     os.system("evince " + filnavn[:-3] + "pdf")
+    os.rename(filnavn, "tex/"+filnavn)
+    os.rename(filnavn[:-3]+"pdf", "pdf/"+filnavn[:-3]+"pdf")
+    os.rename(filnavn[:-3]+"png", "img/"+filnavn[:-3]+"png")
     if os.path.exists(filnavn[:-3] + "log"):
         os.remove(filnavn[:-3] + "log")
     if os.path.exists(filnavn[:-3] + "aux"):
         os.remove(filnavn[:-3] + "aux")
-    os.rename(filnavn, "tex/"+filnavn)
-    os.rename(filnavn[:-3]+"pdf", "pdf/"+filnavn[:-3]+"pdf")
+    if os.path.exists(filnavn[:-3] + "jpg"):
+        os.remove(filnavn[:-3] + "jpg")
 
 top = Tk()
 top.minsize(width=300, height=110)
