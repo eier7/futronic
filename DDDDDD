@@ -1,0 +1,86 @@
+\documentclass[14pt]{article}
+
+\usepackage[a4paper,pdftex]{geometry}	% Use A4 paper margins
+\usepackage[english]{babel}
+\usepackage{xcolor, colortbl} % Required for specifying custom colors
+\usepackage{fix-cm} % Allows increasing the font size of specific fonts beyond LaTeX default specifications
+\usepackage{datetime}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{gensymb}
+
+\setlength{\oddsidemargin}{0mm} % Adjust margins to center the colored title box
+\setlength{\evensidemargin}{0mm} % Margins on even pages - only necessary if adding more content to this template
+
+\newcommand{\HRule}[1]{\hfill \rule{0.2\linewidth}{#1}} % Horizontal rule at the bottom of the page, adjust width here
+
+\definecolor{grey}{rgb}{0.9,0.9,0.9} % Color of the box surrounding the title - these values can be changed to give the box a different color	
+
+%tabell
+\definecolor{Gray}{gray}{0.85}
+\newcolumntype{a}{>{\columncolor{Gray}}c}
+\let\oldtabular\tabular
+\renewcommand{\tabular}{\large\oldtabular}
+\begin{document}
+
+\hspace{10cm}
+\includegraphics[width=4cm]{logo.pdf}
+\vskip -1.9cm~ \\
+\Large\hspace{4cm} \hfill ~\\[0.1cm]
+\hfill \normalsize
+{\bf Futronic} \hspace{4cm} ~\\[-.05cm]
+{\bf \Large Testrapport}
+{\small \today}
+\hspace{3cm}\hrule 
+\vskip 1cm
+
+\thispagestyle{empty} % Remove page numbering on this page
+
+\hspace{9cm}\begin{tikzpicture}        %gps-plassering
+	\draw (0,0)--(2,0)--(2,3.5)--(1,4)--(0,3.5)--(0,0);
+    %int gps
+	\draw [brown,fill=brown] (1.07692307692, 0.235294117647) circle [radius=0.1];
+	\draw[dashed, brown] (3, 0.235294117647)--(1.17692307692, 0.235294117647); %X
+	\draw[dashed, brown] (1.07692307692, 0.135294117647)--(1.07692307692, -1); %Y
+    %heading
+    \draw[dotted, blue, ->] (1, 4)--(1, 6);
+    \node[blue] at (1.8, 6){317$^{\circ}$};
+    \node[] at (3, 1.23529411765){A 64.0m}; %A
+    \node[] at (3, -0.764705882353){B 4.0m}; %B
+    \node[] at (0.0769230769231, -1){C 7.0m};%C
+    \node[] at (2.07692307692, -1){D 6.0m};%D
+\end{tikzpicture}
+
+\vskip -6cm\begin{tabular}{l r}
+{\small Name} & MARTIN H  \\
+{\small MMSI} & 257996000 \\
+{\small IMO} &  9639115 \\
+{\small Call sign} & LCWK    \\
+{\small Ship type} &  20 Wing in ground\\
+& \\
+{\small AIS} &  \\
+{\small S/N} &  \\
+& \\
+{\small Latitude} & 68$^{\circ}$25.8650 N\\
+{\small Longitude} & 17$^{\circ}$24.8280 E\\
+{\small True Heading} & 317$^{\circ}$ \\
+{\small COG} & 251$^{\circ}$ \\
+{\small SOG} & 0.0kt \\
+{\small ROT} & 0$^{\circ}$\\
+& \\
+{\small $P_f$} & 7.6W \\
+{\small $P_r$} & 0.2W \\
+{\small VSWR} & 1.39 \\
+{\small AIS1 frequency} & 161975,6MHz \\
+{\small AIS2 frequency} & 162025,2MHz \\
+\end{tabular}
+\vskip 1cm{\it 
+Measurement made by Futronic Test Box serial number: 01334  Calibration due: 29-08-2015 
+Control measurement on MMSI 2579960000  Time/date: 12:00:26 / 05-12-2014 
+}
+\\
+\vskip -6cm \hspace{8cm}\includegraphics[width=6cm, frame]{20141208_MARTIN_H_.png}
+
+
+\end{document}

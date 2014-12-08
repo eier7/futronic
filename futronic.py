@@ -10,36 +10,35 @@ from PIL import Image
 import urllib
 
 def collectdata(futronic_file, shiptype, aistype, aissn):
-    name="N/A"
-    MMSI="N/A"
-    IMO="N/A"
-    csign="N/A"
-    lat="N/A"
-    latd="N/A"
-    lon="N/A"
-    lond="N/A"
-    heading="N/A"
-    cog="N/A"
-    sog="N/A"
-    rot="N/A"
-    pf="N/A"
-    pr="N/A"
-    vswr="N/A"
-    ais1freq="N/A"
-    ais2freq="N/A"
-    gpsa = "N/A"
-    gpsb = "N/A"
-    gpsc = "N/A"
-    gpsd = "N/A"
-    fut1msg = "N/A"
-    fut2msg = "N/A"
+    name=""
+    MMSI=""
+    IMO=""
+    csign=""
+    lat=""
+    latd=""
+    lon=""
+    lond=""
+    heading=""
+    cog=""
+    sog=""
+    rot=""
+    pf=""
+    pr=""
+    vswr=""
+    ais1freq=""
+    ais2freq=""
+    gpsa = ""
+    gpsb = ""
+    gpsc = ""
+    gpsd = ""
+    fut1msg = ""
+    fut2msg = ""
     with open(futronic_file) as f:
         for line in f:
             m = re.search("Name:\s*([^@]*)", line) #Name
             if(m):
                 if(m.group(1)):
                     name=m.group(1)
-                    name=name.replace(' ',"")
             m = re.search("MMSI:\s*(\d{9})", line) #MMSI
             if(m):
                 if(m.group(1)):
@@ -48,10 +47,11 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
             if(m):
                 if(m.group(1)):
                     IMO=m.group(1)
-            m = re.search("C\.SIGN:\s*([^@]*)\s*IMO", line) #Call Sign
+            m = re.search("C\.SIGN:\s*(.*)\s*IMO", line) #Call Sign
             if(m):
                 if(m.group(1)):
                     csign=m.group(1)
+                    csign=csign.replace('@','')
             m = re.search("Position:\s*(\S*)\s*(\w)\s*(\S*)\s*(\w)", line) #Position
             if(m):
                 if(m.group(1) and m.group(2) and m.group(3) and m.group(4)):
@@ -123,7 +123,7 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
                     fut2msg=m.group(1)
     f.close()
     
-    filnavn = time.strftime("%Y%m%d_")+name+".tex"
+    filnavn = time.strftime("%Y%m%d_")+name.replace(' ','_')+".tex"
     if(name != "N/A"):
         shutil.copyfile("futronic_ais", filnavn)
 
@@ -212,9 +212,9 @@ def collectdata(futronic_file, shiptype, aistype, aissn):
     o.close()
     os.system("pdflatex " + filnavn)
     os.system("evince " + filnavn[:-3] + "pdf")
-    os.rename(filnavn, "tex/"+filnavn)
-    os.rename(filnavn[:-3]+"pdf", "pdf/"+filnavn[:-3]+"pdf")
-    os.rename(filnavn[:-3]+"png", "img/"+filnavn[:-3]+"png")
+    os.rename(filnavn, os.path.join('tex', filnavn))
+    os.rename(filnavn[:-3]+"pdf", os.path.join('pdf',filnavn[:-3]+"pdf"))
+    os.rename(filnavn[:-3]+"png", os.path.join('img',filnavn[:-3]+"png"))
     if os.path.exists(filnavn[:-3] + "log"):
         os.remove(filnavn[:-3] + "log")
     if os.path.exists(filnavn[:-3] + "aux"):
